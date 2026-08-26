@@ -10,6 +10,22 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    # Levanta una base de datos PostgreSQL real en el entorno de pruebas
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: taskflow_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -25,4 +41,9 @@ jobs:
       run: chmod +x mvnw
 
     - name: Run Unit Tests
+      env:
+        SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/taskflow_test
+        SPRING_DATASOURCE_USERNAME: postgres
+        SPRING_DATASOURCE_PASSWORD: postgres_password
+        JWT_SECRET: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
       run: ./mvnw test
