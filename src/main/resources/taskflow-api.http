@@ -1,0 +1,122 @@
+### Variables Globales
+@baseUrl = http://localhost:8080/api
+@username = daniel_test
+@email = daniel@example.com
+@password = Password123!
+
+###############################################################################
+# 1. MODULO DE AUTENTICACION
+###############################################################################
+
+### 1.1 Registrar un nuevo usuario
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "{{username}}",
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+> {%
+    client.test("Registro exitoso", function() {
+        client.assert(response.status === 201 || response.status === 200, "Código de respuesta esperado 201/200");
+    });
+%}
+
+### 1.2 Iniciar sesión y guardar el Token JWT
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "{{username}}",
+  "password": "{{password}}"
+}
+
+> {%
+    client.test("Login exitoso y obtención de token", function() {
+        client.assert(response.status === 200, "Respuesta esperada 200 OK");
+        client.assert(response.body.token !== undefined, "El token debe estar presente en la respuesta");
+    });
+    // Guarda el token automáticamente en una variable global para las siguientes peticiones
+    client.global.set("jwtToken", response.body.token);
+%}
+
+###############################################################################
+# 2. MODULO DE TAREAS (Rutas Protegidas)
+###############################################################################
+
+### 2.1 Crear una nueva tarea
+# @name createTask
+POST {{baseUrl}}/tasks
+Content-Type: application/json
+Authorization: Bearer {{jwtToken}}
+
+{
+  "title": "Configurar Jetpack Compose en Android",
+  "description": "Implementar la capa de UI con Retrofit para consumir la API de TaskFlow",
+  "completed": false
+}
+
+> {%
+    client.test("Tarea creada correctamente", function() {
+        client.assert(response.status === 201 || response.status === 200, "Tarea creada");
+        client.assert(response.body.id !== undefined, "ID de tarea presente");
+    });
+    // Guarda el ID de la tarea recién creada
+    client.global.set("taskId", response.body.id);
+%}
+
+### 2.2 Obtener todas las tareas del usuario
+GET {{baseUrl}}/tasks
+Authorization: Bearer {{jwtToken}}
+
+### 2.3 Obtener una tarea por ID
+GET {{baseUrl}}/tasks/{{taskId}}
+Authorization: Bearer {{jwtToken}}
+
+### 2.4 Alternar/Invertir estado de la tarea (PATCH Complete)
+PATCH {{baseUrl}}/tasks/{{taskId}}/complete
+Authorization: Bearer {{jwtToken}}
+
+### 2.5 Actualizar una tarea completa (PUT)
+PUT {{baseUrl}}/tasks/{{taskId}}
+Content-Type: application/json
+Authorization: Bearer {{jwtToken}}
+
+{
+  "title": "Configurar Retrofit y StateFlow en Android",
+  "description": "Integrar el cliente HTTP con manejo de estado en Jetpack Compose",
+  "completed": true
+}
+
+### 2.6 Eliminar la tarea
+DELETE {{baseUrl}}/tasks/{{taskId}}
+Authorization: Bearer {{jwtToken}}
+
+###############################################################################
+# 3. PRUEBAS DE ERRORES Y SEGURIDAD (GlobalExceptionHandler)
+###############################################################################
+
+### 3.1 Error 401: Intentar acceder a tareas sin Token
+GET {{baseUrl}}/tasks
+
+### 3.2 Error 400: Intentar registrar un usuario con campos vacíos
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "",
+  "email": "correo-invalido",
+  "password": "123"
+}
+
+### 3.3 Error 401: Intentar login con credenciales incorrectas
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "{{username}}",
+  "password": "PasswordIncorrecto123"
+}
