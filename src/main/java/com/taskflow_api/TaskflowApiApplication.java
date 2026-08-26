@@ -11,11 +11,11 @@ import org.springframework.context.annotation.Bean;
 public class TaskflowApiApplication {
 
 	public static void main(String[] args) {
-		Dotenv dotenv = Dotenv.load();
-
-		System.setProperty("SPRING_DATASOURCE_URL", dotenv.get("SPRING_DATASOURCE_URL"));
-		System.setProperty("SPRING_DATASOURCE_USERNAME", dotenv.get("SPRING_DATASOURCE_USERNAME"));
-		System.setProperty("SPRING_DATASOURCE_PASSWORD", dotenv.get("SPRING_DATASOURCE_PASSWORD"));
+		// Cargar .env solo si existe (ignora si no lo encuentra, como en Railway)
+		Dotenv.configure()
+				.ignoreIfMissing()
+				.systemProperties()
+				.load();
 		SpringApplication.run(TaskflowApiApplication.class, args);
 	}
 
