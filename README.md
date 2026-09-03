@@ -1,12 +1,27 @@
 # 🚀 Taskflow API
 
-![Java](https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=openjdk)
-![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.x-6DB33F?style=for-the-badge&logo=springboot)
-![Docker](https://img.shields.io/badge/Docker-Multi--stage-2496ED?style=for-the-badge&logo=docker)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-4169E1?style=for-the-badge&logo=postgresql)
-![CI/CD](https://img.shields.io/badge/CI-GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions)
+<p align="center">
+  <a href="https://taskflow-api-production-52a1.up.railway.app">
+    <img src="https://img.shields.io/badge/Live_Demo-Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white" alt="Live Demo" />
+  </a>
+  <a href="https://github.com/danielomh24/taskflow-api">
+    <img src="https://img.shields.io/badge/Source_Code-GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />
+  </a>
+</p>
 
-**Taskflow API** es una solución Backend RESTful moderna, robusta y escalable diseñada para la gestión integral de tareas y proyectos. El proyecto está construido bajo buenas prácticas de arquitectura en capas, seguridad mediante JSON Web Tokens (JWT) y una sólida suite de pruebas unitarias integradas en un flujo de **Integración Continua (CI/CD)**.
+<p align="center">
+  <img src="https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java 21" />
+  <img src="https://img.shields.io/badge/Spring_Boot-3.x-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" alt="Spring Boot" />
+  <img src="https://img.shields.io/badge/PostgreSQL-Database-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/Docker-Multi--stage-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" />
+  <img src="https://img.shields.io/badge/CI%2FCD-GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white" alt="GitHub Actions" />
+</p>
+
+---
+
+## 📌 Descripción
+
+**Taskflow API** es una solución Backend RESTful moderna, robusta y escalable diseñada para la gestión integral de tareas y proyectos. El proyecto está construido siguiendo buenas prácticas de arquitectura en capas, seguridad basada en **JSON Web Tokens (JWT)** y una sólida suite de pruebas unitarias automatizadas e integradas en un pipeline continuo de **CI/CD**.
 
 ---
 
@@ -19,65 +34,97 @@
 * **Pruebas Unitarias:** JUnit 5, Mockito
 * **Contenedorización:** Docker (Multi-stage build)
 * **CI/CD Pipeline:** GitHub Actions
+* **Despliegue Cloud:** Railway
+
+---
+
+## 🌐 Live API & Despliegue
+
+La aplicación se encuentra desplegada y en producción a través de **Railway**:
+
+* 🔗 **Base URL:** `https://taskflow-api-production-52a1.up.railway.app`
+
+---
+
+## 🧪 Pruebas Rápidas & Testing de la API
+
+Puedes interactuar y probar la API mediante cualquiera de las siguientes opciones:
+
+### Opción 1: Archivo de Peticiones Interactivo (Recomendado)
+El proyecto incluye un archivo preparado con solicitudes HTTP en [`src/main/resources/taskflow-api.http`](./src/main/resources/taskflow-api.http).
+
+Si utilizas **IntelliJ IDEA** o **VS Code** (con la extensión *REST Client*), puedes abrir dicho archivo y ejecutar peticiones directamente contra el servidor de producción con un solo clic.
+
+### Opción 2: Autenticación mediante cURL
+
+**Solicitud de Login:**
+curl -X POST https://taskflow-api-production-52a1.up.railway.app/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "admin",
+    "password": "password123"
+  }'
+
+**Respuesta Esperada:**
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9...",
+  "type": "Bearer"
+}
 
 ---
 
 ## 🏗️ Arquitectura del Proyecto
 
-El código fuente sigue un diseño limpio y desacoplado, estructurado en capas para garantizar mantenibilidad y modularidad:
+El código fuente sigue una estructura limpia y desacoplada organizada por capas:
 
 src/main/java/com/taskflow_api/
-├── config/       # Configuraciones de Seguridad, JWT Filter y Beans
+├── config/       # Seguridad, Filtros JWT y Beans Globales
 ├── controllers/  # Controladores REST (Endpoints)
-├── dto/          # Data Transfer Objects (Peticiones y Respuestas)
-├── exceptions/   # Manejo Global de Excepciones y Handlers
-├── models/       # Entidades JPA (Mapeo de la Base de Datos)
+├── dto/          # Data Transfer Objects (Request/Response)
+├── exceptions/   # Manejo Global de Excepciones (GlobalExceptionHandler)
+├── models/       # Entidades JPA (Mapeo O/R)
 ├── repositories/ # Interfaces Spring Data JPA
-└── services/     # Lógica de Negocio (Capa aislada probada con Mockito)
+└── services/     # Lógica de Negocio (Probada de forma aislada con Mockito)
 
 ---
 
-## 🧪 Suite de Pruebas Unitarias & CI/CD
+## 🧪 Pruebas Unitarias & Integración Continua (CI/CD)
 
-La lógica de negocio central cuenta con un conjunto automatizado de 14 pruebas unitarias aisladas escritas con **JUnit 5** y **Mockito**.
+La capa de servicio cuenta con una suite automatizada de **14 pruebas unitarias aisladas** utilizando **JUnit 5** y **Mockito**.
 
-### Integración Continua (GitHub Actions)
-Cada `push` o `pull_request` a la rama `main` dispara automáticamente un workflow de **GitHub Actions** que:
-1. Despliega un contenedor de servicios **PostgreSQL 15**.
-2. Configura un entorno aislado con **JDK 21 Temurin**.
-3. Compila el proyecto y ejecuta `./mvnw test`.
+### Pipeline en GitHub Actions
+Cada `push` o `pull_request` a la rama `main` ejecuta un workflow automatizado que:
+1. Instala un entorno aislado con **JDK 21 Temurin**.
+2. Despliega un servicio temporal de **PostgreSQL 15**.
+3. Compila el proyecto y ejecuta el conjunto de pruebas (`./mvnw test`).
 
-### Ejecutar Pruebas Localmente
+### Ejecución Local de Pruebas
 
 ./mvnw clean test
 
 ---
 
-## ⚙️ Configuración de Variables de Entorno
+## ⚙️ Configuración del Entorno (.env)
 
-Para ejecutar la aplicación localmente o en un entorno de producción (Railway / Docker), crea un archivo `.env` en la raíz del proyecto. **Nunca subas tu archivo `.env` real al repositorio de control de versiones.**
+Crea un archivo `.env` en la raíz del proyecto para definir las credenciales necesarias. **No incluyas tu archivo `.env` real dentro del control de versiones.**
 
-Estructura requerida:
-
-| Variable | Descripción | Formato Requerido |
-| :--- | :--- | :--- |
-| `SPRING_DATASOURCE_URL` | URL de conexión JDBC a PostgreSQL | `jdbc:postgresql://<HOST>:<PUERTO>/<NOMBRE_BD>` |
-| `SPRING_DATASOURCE_USERNAME` | Usuario de la base de datos | Nombre de usuario configurado en PostgreSQL |
-| `SPRING_DATASOURCE_PASSWORD` | Contraseña del usuario | Contraseña configurada en PostgreSQL |
-| `JWT_SECRET` | Clave secreta para la firma de tokens | Cadena segura codificada en HEX o Base64 |
-| `JWT_EXPIRATION` | Tiempo de validez del token JWT en ms | Valor numérico (ej. 86400000 para 24 horas) |
+SPRING_DATASOURCE_URL=jdbc:postgresql://<HOST>:<PUERTO>/<NOMBRE_BD>
+SPRING_DATASOURCE_USERNAME=<USUARIO_BD>
+SPRING_DATASOURCE_PASSWORD=<PASSWORD_BD>
+JWT_SECRET=<TU_CLAVE_SECRETA_BASE64>
+JWT_EXPIRATION=86400000
 
 ---
 
-## 🚀 Despliegue y Ejecución con Docker
+## 🚀 Despliegue Local con Docker
 
-La aplicación implementa un `Dockerfile` optimizado con **Multi-stage builds** usando imágenes Alpine de Eclipse Temurin para maximizar la velocidad de compilación y reducir el tamaño final de la imagen.
+El proyecto utiliza un `Dockerfile` optimizado mediante **Multi-stage builds** sobre imágenes Eclipse Temurin Alpine para reducir el peso final del contenedor.
 
-### 1. Construir la Imagen de Docker
+### 1. Construir la Imagen
 
 docker build -t taskflow-api .
 
-### 2. Ejecutar el Contenedor con Variables de Entorno
+### 2. Desplegar el Contenedor
 
 docker run -d -p 8080:8080 --env-file .env --name taskflow-app taskflow-api
 
@@ -96,10 +143,10 @@ docker run -d -p 8080:8080 --env-file .env --name taskflow-app taskflow-api
 
 | Método | Endpoint | Descripción | Requiere Auth |
 | :---: | :--- | :--- | :---: |
-| `GET` | `/api/v1/tasks` | Listar todas las tareas del usuario autenticado | ✅ Bearer JWT |
+| `GET` | `/api/v1/tasks` | Listar todas las tareas del usuario | ✅ Bearer JWT |
 | `POST` | `/api/v1/tasks` | Crear una nueva tarea | ✅ Bearer JWT |
-| `GET` | `/api/v1/tasks/{id}` | Obtener detalle de una tarea por ID | ✅ Bearer JWT |
-| `PUT` | `/api/v1/tasks/{id}` | Actualizar título, descripción o estado | ✅ Bearer JWT |
+| `GET` | `/api/v1/tasks/{id}` | Obtener detalle de una tarea | ✅ Bearer JWT |
+| `PUT` | `/api/v1/tasks/{id}` | Actualizar datos o estado de la tarea | ✅ Bearer JWT |
 | `DELETE` | `/api/v1/tasks/{id}` | Eliminar una tarea | ✅ Bearer JWT |
 
 ---
